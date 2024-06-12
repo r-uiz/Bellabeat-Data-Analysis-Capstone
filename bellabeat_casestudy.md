@@ -1,0 +1,772 @@
+---
+title: Bellabeat Data Analysis Capstone Project
+author: Ruiz del Carmen
+portfolio: https://www.notion.so/ruizdelcarmen/Ruiz-del-Carmen-Data-Portfolio-e725748d0e0546c386be6c6c7dc49099
+linkedin: https://www.linkedin.com/in/ruizdelcarmen/
+github: https://github.com/r-uiz
+hire: yes
+output: 
+  html_document:
+    keep_md: true
+---
+
+# Bellabeat Data Analysis Capstone Project
+
+
+
+## Table of Contents
+
+1. [Summary](#1-summary)
+	1. [Background](#11-background)
+	2. [This Project](#12-this-project)
+2. [Ask Phase](#2-ask-phase)
+	1. [Business Task Statement](#21-business-task-statement)
+3. [Prepare Phase](#3-prepare-phase)
+	1. [Data Source](#31-data-source)
+	2. [Accessibility and Privacy of Data](#32-accessibility-and-privacy-of-data)
+	3. [Information About Our Dataset](#33-information-about-our-dataset)
+	4. [Data Organization](#34-data-organization)
+	5. [Data Integrity and Credibility](#35-data-integrity-and-credibility)
+4. [Process Phase](#4-process-phase)
+	1. [Installing Packages and Opening Libraries](#41-installing-packages-and-opening-libraries)
+	2. [Loading the Data](#42-loading-the-data)
+	3. [Preview the Data](#43-preview-the-data)
+	4. [Check the Data Structure](#44-check-the-data-structure)
+	5. [Data Cleaning](#45-data-cleaning)
+		1. [Check Number of Participants](#451-check-number-of-participants)
+		2. [Check for Duplicates](#452-check-for-duplicates)
+		3. [Remove Duplicates & Missing Values](#453-remove-duplicates--missing-values)
+		4. [Rename Columns](#454-rename-columns)
+		5. [Convert Date Columns](#455-convert-date-columns)
+	6. [Merge Data Sets](#46-merge-data-sets)
+5. [Analyze & Share Phase](#5-analyze--share-phase)
+	1. [Daily Activity](#51-daily-activity)
+		1. [Insights](#insights)
+	2. [Daily Sleep](#52-daily-sleep)
+		1. [Insights](#insights-1)
+	3. [Daily Steps v. Calories Burned](#53-daily-steps-v-calories-burned)
+		1. [Insights](#insights-2)
+	4. [Hourly Intensity](#54-hourly-intensity)
+		1. [Insights](#insights-3)
+	5. [Hourly Steps](#55-hourly-steps)
+		1. [Insights](#insights-4)
+	6. [Steps by Weekday](#56-steps-by-weekday)
+		1. [Insights](#insights-5)
+6. [Recommendations](#6-recommendations)
+7. [References](#7-references)
+
+
+## 1. Summary
+
+### 1.1 Background
+
+> This is a capstone project for Google Data Analytics Professional, and the following is the given situation.
+
+Urška Sršen and Sando Mur founded Bellabeat, a high-tech company that manufactures health-focused smart products. Sršen used her background as an artist to develop beautifully designed technology that informs and inspires women around the world. Collecting data on activity, sleep, stress, and reproductive health has allowed Bellabeat to empower women with knowledge about their own health and habits.
+
+### 1.2 This Project
+
+This study focuses on analyzing smart device usage data to gain insight into how consumers use non-Bellabeat smart devices. Insights gained will be applied to growth opportunities towards the Bellabeat products: primarily the **Time** smart watch, and subsequently the **Membership**.
+
+- **Time**: This wellness watch combines the timeless look of a classic timepiece with smart technology to track user activity, sleep, and stress. The Time watch connects to the Bellabeat app to provide you with insights into your daily wellness.
+- **Bellabeat membership**: Bellabeat also offers a subscription-based membership program for users. Membership gives users 24/7 access to fully personalized guidance on nutrition, activity, sleep, health and beauty, and mindfulness based on their lifestyle and goals.
+
+## 2. Ask Phase
+
+### 2.1 Business task statement
+
+Garner insight from public data on use of wearable health-tracking technology that could influence and direct Bellabeat's marketing strategy, specifically for the **Time** smart watch and, subsequently, the **Membership** guidance.
+
+**Stakeholders**
+	- **Urška Sršen:** Bellabeat's cofounder and Chief Creative Officer
+	- **Sando Mur:** Mathematician and Bellabeat's cofounder
+	- **Bellabeat marketing analytics team**
+
+## 3. Prepare Phase
+
+### 3.1 Data Source
+The data source used for this case study is the [FitBit Fitness Tracker Data](https://www.kaggle.com/datasets/arashnic/fitbit); a data source stored in Kaggle and was made available by [Möbius](https://www.kaggle.com/arashnic).
+
+### 3.2 Accessibility and privacy of data:
+
+The data source is verified to be available for public use and are public domain [CC0 1.0 Deed](https://creativecommons.org/publicdomain/zero/1.0/). The data source's author have waived their rights to the work worldwide under copyright law, including all related and neighboring rights, to the extent allowed by law. You can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.
+
+### 3.3 Information about our dataset:
+
+- [FitBit Fitness Tracker Data](https://www.kaggle.com/datasets/arashnic/fitbit)
+	- This dataset is generated by 30 respondents using a Fitbit to a distributed survey via Amazon Mechanical Turk between 03.12.2016-05.12.2016.
+	- Columns information available on [Fitbit's data dictionary](https://www.fitabase.com/media/1930/fitabasedatadictionary102320.pdf).
+
+### 3.4 Data Organization:
+
+Eighteen CSV files are available for analysis, each containing different quantitative data tracked by Fitbit. The data is organized in a long format, where each row represents a single time point per subject, resulting in multiple rows for each user. Each user has a unique ID, and the data is tracked by day and time.
+
+### 3.5 Data Integrity and Credibility:
+
+The dataset has limitations, including a small sample size (30 users) and a lack of demographic information, particularly gender data since Bellabeat is targeted for women, which may lead to sampling bias. This raises concerns about the sample's representativeness of the general population. Additionally, the dataset is not current, and the survey period was limited to two months. Therefore, the case study will adopt an operational approach.
+
+## 4. Process Phase
+
+For this analysis, I will be primarily using R due to ease of use, amount of data to be processed, easier documentation, and generation of data visualizations to share results with stakeholders.
+
+### 4.1 Installing packages and opening libraries
+
+Let's start by loading the necessary libraries that will aid our analysis.
+
+
+``` r
+library(tidyverse) # For data manipulation
+library(skimr) # For data summary
+library(janitor) # For cleaning column names
+library(lubridate) # For date manipulation
+library(readr) # For reading CSV files
+library(dplyr) # For data manipulation
+```
+
+### 4.2 Loading the data
+
+The data is stored in 18 CSV files, and we will load each file into a separate data frame. We will then combine the data frames into a single data frame for analysis.
+
+
+``` r
+# Load the data
+daily_activity <- read_csv("data/dailyActivity_merged.csv") %>%
+  as.data.frame()
+daily_sleep <- read_csv("data/sleepDay_merged.csv") %>%
+  as.data.frame()
+hourly_intensities <- read_csv("data/hourlyIntensities_merged.csv") %>%
+  as.data.frame()
+hourly_calories <- read_csv("data/hourlyCalories_merged.csv") %>%
+  as.data.frame()
+hourly_steps <- read_csv("data/hourlySteps_merged.csv") %>%
+  as.data.frame()
+weight <- read_csv("data/weightLogInfo_merged.csv") %>%
+  as.data.frame()
+```
+
+### 4.3 Preview the data
+
+Let's take a look at the first few rows of each data frame to understand the structure of the data.
+
+
+``` r
+head(daily_activity)
+head(daily_sleep)
+head(hourly_intensities)
+head(hourly_calories)
+head(hourly_steps)
+head(weight)
+```
+
+### 4.4 Check the data structure
+
+Let's check the structure of each data frame to understand the variables and data types.
+
+
+``` r
+str(daily_activity)
+str(daily_sleep)
+str(hourly_intensities)
+str(hourly_calories)
+str(hourly_steps)
+str(weight)
+```
+
+### 4.5 Data Cleaning
+
+We will clean the data by addressing missing values, renaming columns, and converting data types to facilitate analysis.
+
+#### 4.5.1 Check number of participants
+
+Let's check the number of participants in the dataset to ensure that the sample size is consistent across all data frames.
+
+
+``` r
+# Check the number of participants in each data frame
+length(unique(daily_activity$Id))
+```
+
+```
+## [1] 33
+```
+
+``` r
+length(unique(daily_sleep$Id))
+```
+
+```
+## [1] 24
+```
+
+``` r
+length(unique(hourly_intensities$Id))
+```
+
+```
+## [1] 33
+```
+
+``` r
+length(unique(hourly_calories$Id))
+```
+
+```
+## [1] 33
+```
+
+``` r
+length(unique(hourly_steps$Id))
+```
+
+```
+## [1] 33
+```
+
+``` r
+length(unique(weight$Id))
+```
+
+```
+## [1] 8
+```
+
+Weight data has too little participants compared to the other data frames. We will exclude this data frame from the analysis to avoid bias since the sample size is too small. All other data frames have 33 participants, except for daily_sleep which has 24 participants.
+
+#### 4.5.2 Check for Duplicates
+
+Let's check for duplicates in each data frame to ensure data integrity.
+
+
+``` r
+# Check for duplicates in each data frame
+sum(duplicated(daily_activity))
+sum(duplicated(daily_sleep))
+sum(duplicated(hourly_intensities))
+sum(duplicated(hourly_calories))
+sum(duplicated(hourly_steps))
+```
+
+#### 4.5.3 Remove Duplicates & Missing Values
+
+Let's remove duplicates and address missing values in each data frame.
+
+
+``` r
+# Remove duplicates and missing values
+daily_activity <- daily_activity %>% distinct() %>% drop_na()
+daily_sleep <- daily_sleep %>% distinct() %>% drop_na()
+hourly_intensities <- hourly_intensities %>% distinct() %>% drop_na()
+hourly_calories <- hourly_calories %>% distinct() %>% drop_na()
+hourly_steps <- hourly_steps %>% distinct() %>% drop_na()
+```
+
+#### 4.5.4 Rename Columns
+
+Let's standardize the column names in each data frame to ensure consistency and ease of analysis.
+
+
+``` r
+clean_names(daily_activity)
+daily_activity <- rename_with(daily_activity, tolower)
+clean_names(daily_sleep)
+daily_sleep <- rename_with(daily_sleep, tolower)
+clean_names(hourly_intensities)
+hourly_intensities <- rename_with(hourly_intensities, tolower)
+clean_names(hourly_calories)
+hourly_calories <- rename_with(hourly_calories, tolower)
+clean_names(hourly_steps)
+hourly_steps <- rename_with(hourly_steps, tolower)
+```
+
+#### 4.5.5 Convert Date Columns
+
+Let's convert the date columns to the appropriate date format for analysis.
+
+
+``` r
+daily_activity <- daily_activity %>%
+  rename(date = activitydate) %>%
+  mutate(date = mdy(date))
+daily_sleep <- daily_sleep %>%
+  rename(date = sleepday) %>%
+  mutate(date = mdy_hms(date))
+hourly_intensities <- hourly_intensities %>%
+  rename(date_time = activityhour) %>%
+  mutate(date_time = mdy_hms(date_time))
+hourly_calories <- hourly_calories %>%
+  rename(date_time = activityhour) %>%
+  mutate(date_time = mdy_hms(date_time))
+hourly_steps <- hourly_steps %>%
+  rename(date_time = activityhour) %>%
+  mutate(date_time = mdy_hms(date_time))
+```
+
+### 4.6 Merge Data Sets
+
+Let's merge the daily data sets into a single data frame for simplicity during analysis.
+
+
+``` r
+daily_data <- merge(daily_activity,daily_sleep, by =c ("id","date"))
+```
+
+Now let's merge the hourly data sets into a single data frame as well.
+
+
+``` r
+hourly_data <- merge(hourly_intensities,hourly_calories, by =c ("id","date_time")) %>%
+  merge(hourly_steps, by =c ("id","date_time"))
+```
+
+
+``` r
+# See column structures
+str(daily_data)
+```
+
+```
+## 'data.frame':	410 obs. of  18 variables:
+##  $ id                      : num  1.5e+09 1.5e+09 1.5e+09 1.5e+09 1.5e+09 ...
+##  $ date                    : Date, format: "2016-04-12" "2016-04-13" ...
+##  $ totalsteps              : num  13162 10735 9762 12669 9705 ...
+##  $ totaldistance           : num  8.5 6.97 6.28 8.16 6.48 ...
+##  $ trackerdistance         : num  8.5 6.97 6.28 8.16 6.48 ...
+##  $ loggedactivitiesdistance: num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ veryactivedistance      : num  1.88 1.57 2.14 2.71 3.19 ...
+##  $ moderatelyactivedistance: num  0.55 0.69 1.26 0.41 0.78 ...
+##  $ lightactivedistance     : num  6.06 4.71 2.83 5.04 2.51 ...
+##  $ sedentaryactivedistance : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ veryactiveminutes       : num  25 21 29 36 38 50 28 19 41 39 ...
+##  $ fairlyactiveminutes     : num  13 19 34 10 20 31 12 8 21 5 ...
+##  $ lightlyactiveminutes    : num  328 217 209 221 164 264 205 211 262 238 ...
+##  $ sedentaryminutes        : num  728 776 726 773 539 775 818 838 732 709 ...
+##  $ calories                : num  1985 1797 1745 1863 1728 ...
+##  $ totalsleeprecords       : num  1 2 1 2 1 1 1 1 1 1 ...
+##  $ totalminutesasleep      : num  327 384 412 340 700 304 360 325 361 430 ...
+##  $ totaltimeinbed          : num  346 407 442 367 712 320 377 364 384 449 ...
+```
+
+``` r
+str(hourly_data)
+```
+
+```
+## 'data.frame':	22099 obs. of  6 variables:
+##  $ id              : num  1.5e+09 1.5e+09 1.5e+09 1.5e+09 1.5e+09 ...
+##  $ date_time       : POSIXct, format: "2016-04-12 00:00:00" "2016-04-12 01:00:00" ...
+##  $ totalintensity  : num  20 8 7 0 0 0 0 0 13 30 ...
+##  $ averageintensity: num  0.333 0.133 0.117 0 0 ...
+##  $ calories        : num  81 61 59 47 48 48 48 47 68 141 ...
+##  $ steptotal       : num  373 160 151 0 0 ...
+```
+
+``` r
+# Preview the merged data sets
+head(daily_data)
+```
+
+```
+##           id       date totalsteps totaldistance trackerdistance
+## 1 1503960366 2016-04-12      13162          8.50            8.50
+## 2 1503960366 2016-04-13      10735          6.97            6.97
+## 3 1503960366 2016-04-15       9762          6.28            6.28
+## 4 1503960366 2016-04-16      12669          8.16            8.16
+## 5 1503960366 2016-04-17       9705          6.48            6.48
+## 6 1503960366 2016-04-19      15506          9.88            9.88
+##   loggedactivitiesdistance veryactivedistance moderatelyactivedistance
+## 1                        0               1.88                     0.55
+## 2                        0               1.57                     0.69
+## 3                        0               2.14                     1.26
+## 4                        0               2.71                     0.41
+## 5                        0               3.19                     0.78
+## 6                        0               3.53                     1.32
+##   lightactivedistance sedentaryactivedistance veryactiveminutes
+## 1                6.06                       0                25
+## 2                4.71                       0                21
+## 3                2.83                       0                29
+## 4                5.04                       0                36
+## 5                2.51                       0                38
+## 6                5.03                       0                50
+##   fairlyactiveminutes lightlyactiveminutes sedentaryminutes calories
+## 1                  13                  328              728     1985
+## 2                  19                  217              776     1797
+## 3                  34                  209              726     1745
+## 4                  10                  221              773     1863
+## 5                  20                  164              539     1728
+## 6                  31                  264              775     2035
+##   totalsleeprecords totalminutesasleep totaltimeinbed
+## 1                 1                327            346
+## 2                 2                384            407
+## 3                 1                412            442
+## 4                 2                340            367
+## 5                 1                700            712
+## 6                 1                304            320
+```
+
+``` r
+head(hourly_data)
+```
+
+```
+##           id           date_time totalintensity averageintensity calories
+## 1 1503960366 2016-04-12 00:00:00             20         0.333333       81
+## 2 1503960366 2016-04-12 01:00:00              8         0.133333       61
+## 3 1503960366 2016-04-12 02:00:00              7         0.116667       59
+## 4 1503960366 2016-04-12 03:00:00              0         0.000000       47
+## 5 1503960366 2016-04-12 04:00:00              0         0.000000       48
+## 6 1503960366 2016-04-12 05:00:00              0         0.000000       48
+##   steptotal
+## 1       373
+## 2       160
+## 3       151
+## 4         0
+## 5         0
+## 6         0
+```
+
+
+## 5. Analyze & Share Phase
+
+Let's conduct exploratory data analysis to gain insights into the data and identify trends that could inform Bellabeat's marketing strategy.
+
+### 5.1 Daily Activity
+
+Let's start by analyzing daily activity data to understand user behavior.
+
+
+``` r
+# Summary statistics for daily activity data
+daily_activity %>%
+  select(totalsteps, calories, sedentaryminutes, lightlyactiveminutes, fairlyactiveminutes, veryactiveminutes) %>%
+  skim()
+```
+
+
+Table: Data summary
+
+|                         |           |
+|:------------------------|:----------|
+|Name                     |Piped data |
+|Number of rows           |940        |
+|Number of columns        |6          |
+|_______________________  |           |
+|Column type frequency:   |           |
+|numeric                  |6          |
+|________________________ |           |
+|Group variables          |None       |
+
+
+**Variable type: numeric**
+
+|skim_variable        | n_missing| complete_rate|    mean|      sd| p0|     p25|    p50|      p75|  p100|hist  |
+|:--------------------|---------:|-------------:|-------:|-------:|--:|-------:|------:|--------:|-----:|:-----|
+|totalsteps           |         0|             1| 7637.91| 5087.15|  0| 3789.75| 7405.5| 10727.00| 36019|▇▇▁▁▁ |
+|calories             |         0|             1| 2303.61|  718.17|  0| 1828.50| 2134.0|  2793.25|  4900|▁▆▇▃▁ |
+|sedentaryminutes     |         0|             1|  991.21|  301.27|  0|  729.75| 1057.5|  1229.50|  1440|▁▁▇▅▇ |
+|lightlyactiveminutes |         0|             1|  192.81|  109.17|  0|  127.00|  199.0|   264.00|   518|▅▇▇▃▁ |
+|fairlyactiveminutes  |         0|             1|   13.56|   19.99|  0|    0.00|    6.0|    19.00|   143|▇▁▁▁▁ |
+|veryactiveminutes    |         0|             1|   21.16|   32.84|  0|    0.00|    4.0|    32.00|   210|▇▁▁▁▁ |
+
+#### Insights:
+
+- **Total Steps**: The average number of steps taken by users is **7638**, Walking _10,000_ steps daily is associated with several health benefits, including improved cardiovascular health, weight management, better mood, and enhanced joint health. Regular walking can lower the risk of heart disease, diabetes, and high blood pressure, while also helping to reduce stress and improve overall mental well-being [[1]](https://www.mayoclinic.org/healthy-lifestyle/fitness/expert-answers/steps/faq-20430164)[[2]](https://www.heart.org/en/news/2021/11/16/is-10000-steps-really-a-magic-number-for-health)[[3]](https://health.clevelandclinic.org/do-you-really-need-10000-steps-a-day/). This suggests that users are not meeting the recommended daily step count.
+- **Activity Levels**: While some participants meet recommended physical activity levels, many do not. There is a significant variation in physical activity levels among participants, with some being highly active and others largely sedentary. This indicates that there is an opportunity to encourage more users to engage in physical activity.
+
+### 5.2 Daily Sleep
+
+Next, let's analyze daily sleep data to understand user sleep patterns.
+
+
+``` r
+# Summary statistics for daily sleep data
+daily_sleep %>%
+  select(totalminutesasleep, totaltimeinbed) %>%
+  skim()
+```
+
+
+Table: Data summary
+
+|                         |           |
+|:------------------------|:----------|
+|Name                     |Piped data |
+|Number of rows           |410        |
+|Number of columns        |2          |
+|_______________________  |           |
+|Column type frequency:   |           |
+|numeric                  |2          |
+|________________________ |           |
+|Group variables          |None       |
+
+
+**Variable type: numeric**
+
+|skim_variable      | n_missing| complete_rate|   mean|     sd| p0|    p25|   p50| p75| p100|hist  |
+|:------------------|---------:|-------------:|------:|------:|--:|------:|-----:|---:|----:|:-----|
+|totalminutesasleep |         0|             1| 419.17| 118.64| 58| 361.00| 432.5| 490|  796|▁▂▇▃▁ |
+|totaltimeinbed     |         0|             1| 458.48| 127.46| 61| 403.75| 463.0| 526|  961|▁▃▇▁▁ |
+
+Let's create a visualization grouped by weekday.
+
+
+``` r
+# Create a new column for the weekday
+daily_sleep <- daily_sleep %>%
+  mutate(weekday = wday(date, label = TRUE))
+
+# Plot total minutes asleep by weekday
+daily_sleep %>%
+  ggplot(aes(x = weekday, y = totalminutesasleep, fill = weekday)) +
+  geom_boxplot() +
+  labs(title = "Total Minutes Asleep by Weekday",
+	   x = "Weekday",
+	   y = "Total Minutes Asleep") +
+  theme_minimal()
+```
+
+![](project_figs/project-unnamed-chunk-16-1.png)<!-- -->
+
+Summary of the data by weekday
+
+
+``` r
+# Summary of total minutes asleep by weekday
+daily_sleep %>%
+  group_by(weekday) %>%
+  summarize(avg_total_minutes_asleep = mean(totalminutesasleep))
+```
+
+```
+## # A tibble: 7 × 2
+##   weekday avg_total_minutes_asleep
+##   <ord>                      <dbl>
+## 1 Sun                         453.
+## 2 Mon                         420.
+## 3 Tue                         405.
+## 4 Wed                         435.
+## 5 Thu                         401.
+## 6 Fri                         405.
+## 7 Sat                         419.
+```
+
+
+#### Insights:
+- **Total Minutes Asleep**: The average total minutes asleep is **419.8**, which is below the recommended 7-9 hours of sleep per night for adults. Sleep is essential for overall health and well-being, with insufficient sleep linked to various health issues, including obesity, heart disease, and mental health problems [[4]](https://www.cdc.gov/sleep/about/?CDC_AAref_Val=https://www.cdc.gov/sleep/about_sleep/how_much_sleep.html)[[5]](https://www.sleepfoundation.org/how-sleep-works/how-much-sleep-do-we-really-need).
+- **Weekday vs. Weekend Sleep**: Users tend to sleep longer on weekends compared to weekdays. Sleep time during weekdays are mostly less than the minimum of 7 hours. This suggests that users may be catching up on sleep during the weekend, indicating that they may not be getting enough sleep during the week.
+
+### 5.3 Daily Steps v. Calories Burned
+
+Let's analyze the relationship between daily steps and calories burned to understand the impact of physical activity on energy expenditure.
+
+
+``` r
+# Summary statistics for hourly activity data
+daily_activity %>%
+  select(totalsteps, calories) %>%
+  skim()
+```
+
+
+Table: Data summary
+
+|                         |           |
+|:------------------------|:----------|
+|Name                     |Piped data |
+|Number of rows           |940        |
+|Number of columns        |2          |
+|_______________________  |           |
+|Column type frequency:   |           |
+|numeric                  |2          |
+|________________________ |           |
+|Group variables          |None       |
+
+
+**Variable type: numeric**
+
+|skim_variable | n_missing| complete_rate|    mean|      sd| p0|     p25|    p50|      p75|  p100|hist  |
+|:-------------|---------:|-------------:|-------:|-------:|--:|-------:|------:|--------:|-----:|:-----|
+|totalsteps    |         0|             1| 7637.91| 5087.15|  0| 3789.75| 7405.5| 10727.00| 36019|▇▇▁▁▁ |
+|calories      |         0|             1| 2303.61|  718.17|  0| 1828.50| 2134.0|  2793.25|  4900|▁▆▇▃▁ |
+
+Let's create a visualization to check correlation between steps and calories burned.
+
+
+``` r
+# Create a scatter plot of steps vs. calories
+ggplot(data = daily_activity, aes(x = totalsteps, y = calories)) +
+    geom_point() +
+    geom_smooth() +
+    labs(title = "Total Steps vs. Calories") +
+	theme_minimal()
+```
+
+```
+## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+```
+
+![](project_figs/project-unnamed-chunk-19-1.png)<!-- -->
+
+#### Insights:
+- **Steps vs. Calories**: There is a positive correlation between the number of steps taken and the number of calories burned. This suggests that users who take more steps tend to burn more calories, which is essential for weight management and overall health. Encouraging users to increase their daily step count could help improve their overall health and well-being.
+
+### 5.4 Hourly Intensity
+
+Let's now take a look at data on hourly intensity to understand activity patterns. We first need to split date and time values.
+
+
+``` r
+hourly_intensities <- hourly_intensities %>%
+  separate(date_time, into = c("date", "hour"), sep= " ") 
+
+head(hourly_intensities)
+```
+
+```
+##           id       date     hour totalintensity averageintensity
+## 1 1503960366 2016-04-12     <NA>             20         0.333333
+## 2 1503960366 2016-04-12 01:00:00              8         0.133333
+## 3 1503960366 2016-04-12 02:00:00              7         0.116667
+## 4 1503960366 2016-04-12 03:00:00              0         0.000000
+## 5 1503960366 2016-04-12 04:00:00              0         0.000000
+## 6 1503960366 2016-04-12 05:00:00              0         0.000000
+```
+
+``` r
+hourly_intensities <- hourly_intensities %>%
+  group_by(hour) %>%
+  drop_na() %>%
+  summarise(avg_total_int = mean(totalintensity))
+```
+
+Let's make a visualization off this data.
+
+
+``` r
+ggplot(data = hourly_intensities, aes(x = hour,y = avg_total_int)) +
+  geom_histogram(stat='identity',fill = '#350352') +
+  labs(title = "Average Total Intensity vs Hour") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+![](project_figs/project-unnamed-chunk-21-1.png)<!-- -->
+
+#### Insights:
+- **Hourly Intensity**: The average total intensity varies throughout the day, with peaks in the morning and evening. This suggests that users are more active during these times, which could be due to work schedules, exercise routines, or other factors. Understanding these patterns can help Bellabeat tailor their marketing strategies to target users during peak activity times.
+- **Peak Activity Times**: The data shows that users are most active in the morning and evening, which are common times for exercise and physical activity. In the evenings, specifically around 5:00pm to 7:00pm, are times when people usually get off work. This information can be used to target users with marketing messages promoting physical activity during these peak times.
+
+### 5.5 Hourly Steps
+
+Let's analyze hourly steps data to understand user step patterns throughout the day. We first need to split date and time values.
+
+
+``` r
+hourly_steps <- hourly_steps %>%
+  separate(date_time, into = c("date", "hour"), sep= " ")
+
+head(hourly_steps)
+```
+
+```
+##           id       date     hour steptotal
+## 1 1503960366 2016-04-12     <NA>       373
+## 2 1503960366 2016-04-12 01:00:00       160
+## 3 1503960366 2016-04-12 02:00:00       151
+## 4 1503960366 2016-04-12 03:00:00         0
+## 5 1503960366 2016-04-12 04:00:00         0
+## 6 1503960366 2016-04-12 05:00:00         0
+```
+
+``` r
+hourly_steps <- hourly_steps %>%
+  group_by(hour) %>%
+  drop_na() %>%
+  summarise(avg_total_steps = mean(steptotal))
+```
+
+Let's make a visualization off this data.
+
+
+``` r
+ggplot(data = hourly_steps, aes(x = hour,y = avg_total_steps, fill = avg_total_steps)) +
+  geom_histogram(stat='identity') +
+  labs(title = "Average Total Steps vs Hour") +
+  theme_minimal() +
+  scale_fill_gradient(low = "red", high = "green")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+![](project_figs/project-unnamed-chunk-23-1.png)<!-- -->
+
+#### Insights:
+- **Hourly Steps**: This data shows the same pattern as hourly intensity, with peaks in the morning and evening. Users tend to take more steps during these times, which means we could also suggest to target users with marketing messages promoting physical activity regarding step count during these peak times.
+
+### 5.6 Steps by Weekday
+
+Let's analyze the average number of steps taken by users on each weekday to understand weekly activity patterns.
+
+
+``` r
+# Create a new column for the weekday
+daily_activity <- daily_activity %>%
+  mutate(weekday = wday(date, label = TRUE))
+```
+
+Let's create a visualization to show the average steps taken by users on each weekday, with a horizontal line at both 7.5k and 10k steps.
+
+
+``` r
+# Plot average steps by weekday
+daily_activity %>%
+  ggplot(aes(x = weekday, y = totalsteps, fill = weekday)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 7500, linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 10000, linetype = "dashed", color = "green") +
+  labs(title = "Average Steps by Weekday",
+	   x = "Weekday",
+	   y = "Total Steps") +
+  theme_minimal()
+```
+
+![](project_figs/project-unnamed-chunk-25-1.png)<!-- -->
+
+#### Insights:
+- **Steps by Weekday**: Users tend to take more steps on weekends compared to weekdays. This suggests that users may be more active on weekends, which could be due to having more free time to engage in physical activities. Bellabeat could leverage this information to encourage users to maintain their activity levels during the week.
+- **Average Steps**: Although a lot of data suggests that 10k steps is the recommended daily step count, a minimum of 7.5k steps is also beneficial for health. The data shows that users are mostly just below the 7.5k steps mark, indicating that they may not be meeting the minimum recommended daily step count. [[6]](https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/2734709)[[7]](https://www.nih.gov/news-events/nih-research-matters/how-many-steps-better-health)[[8]](https://www.health.harvard.edu/blog/10000-steps-a-day-or-fewer-2019071117305)
+
+## 6 Recommendations
+
+**Bellabeat's** mission is to empower women's health through technology and data. Based on the data analysis, here are key marketing strategy recommendations:
+
+1. **Monthly Events**: Organize monthly challenges or events to encourage users to increase their daily step count and physical activity levels. **Offer rewards or incentives to motivate participation when they use Bellabeat products**.
+
+2. **Target Peak Activity Times**: Use notifications to engage users during **peak times** (morning and evening) to encourage physical activity. Weekends are also a good time to promote wellness activities since users tend to be more active during this time.
+
+3. **Goal Setting**: Encourage users to set daily step goals and track progress to **motivate them to stay active**.
+
+### Specifically For Bellabeat's **Time** Smart Watch:
+
+1. **Improve Activity Tracking**: Provide real-time feedback and **encourage daily activity**. Maybe a vibration alert when users are inactive for too long, or a notification when they reach their daily step goal to celebrate their achievement.
+2. **Enhance Sleep Monitoring**: Offer insights and recommendations to improve sleep quality. **Provide bedtime reminders** to help users establish a healthy sleep routine.
+3. **Introduce Stress Management**: Provide tools to help manage stress and promote relaxation. Offer **guided breathing exercises** or mindfulness activities to reduce stress levels.
+
+### Specifically For Bellabeat's **App**:
+
+1. **Personalized Guidance**: Offer tailored advice on wellness, as well as data visualization to **help users understand their health and wellness trends**.
+2. **Resources and Tips**: Provide articles, videos, and resources on physical activity, sleep, nutrition, and mental health to educate and motivate users. **Could also become another revenue stream through partnerships with health and wellness brands.**
+3. **Community Support**: Create a user community for shared experiences and motivation. **Encourage users to share their progress, challenges, and successes** and provide a platform for peer support.
+
+## 7. References
+
+1. [Mayo Clinic - Walking: Trim your waistline, improve your health](https://www.mayoclinic.org/healthy-lifestyle/fitness/expert-answers/steps/faq-20430164)
+2. [American Heart Association - Is 10,000 steps really a magic number for health?](https://www.heart.org/en/news/2021/11/16/is-10000-steps-really-a-magic-number-for-health)
+3. [Cleveland Clinic - Do You Really Need 10,000 Steps a Day?](https://health.clevelandclinic.org/do-you-really-need-10000-steps-a-day/)
+4. [CDC - How Much Sleep Do I Need?](https://www.cdc.gov/sleep/about/?CDC_AAref_Val=https://www.cdc.gov/sleep/about_sleep/how_much_sleep.html)
+5. [National Sleep Foundation - How Much Sleep Do We Really Need?](https://www.sleepfoundation.org/how-sleep-works/how-much-sleep-do-we-really-need)
+6. [JAMA Network - Association of Step Volume and Intensity With All-Cause Mortality in Older Women](https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/2734709)
+7. [NIH Research Matters - How Many Steps Are Better for Health?](https://www.nih.gov/news-events/nih-research-matters/how-many-steps-better-health)
+8. [Harvard Health - 10,000 steps a day — or fewer?](https://www.health.harvard.edu/blog/10000-steps-a-day-or-fewer-2019071117305)
+
+---
+
+[Back to Top](#bellabeat-data-analysis-capstone-project)
