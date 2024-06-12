@@ -4,4 +4,6 @@ This project was created in fulfillment of the requirements for the [Google Data
 
 This data analysis project aims to analyze smart device usage data to gain insights into how consumers use Bellabeat's competitor's smart devices. The analysis will provide recommendations for Bellabeat's marketing strategy to reach potential customers. The data used in this project is publicly available data from the FitBit Fitness Tracker dataset on Kaggle linked [here](https://www.kaggle.com/arashnic/fitbit).
 
+[See the project here](https://github.com/r-uiz/Bellabeat-Data-Analysis-Capstone/blob/main/bellabeat_casestudy.md).
+
 > Author: [Ruiz del Carmen](https://linkedin.com/in/ruizdelcarmen)
