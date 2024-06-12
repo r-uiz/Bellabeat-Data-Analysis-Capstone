@@ -5,7 +5,9 @@ portfolio: https://www.notion.so/ruizdelcarmen/Ruiz-del-Carmen-Data-Portfolio-e7
 linkedin: https://www.linkedin.com/in/ruizdelcarmen/
 github: https://github.com/r-uiz
 hire: yes
-output:  rmarkdown::github_document
+output: 
+  html_document:
+    keep_md: true
 ---
 
 # Bellabeat Data Analysis Capstone Project
